@@ -23,6 +23,25 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
+        $fields = $request->validate([
+            "first_name"=> "required|string|max:255",
+            "last_name"=> "required|string|max:255",
+            "email"=> "required|unique:suppliers,email",
+            "password"=> "required",
+           'phone_number' => [
+                'required',
+                'regex:/^0[67]\d{8}$/',
+                'unique:suppliers,phone_number'
+                ],
+        ]);
+
+        $user = User::create($fields);
+
+
+        return [
+            'message'=> 'User Created Successfully',
+            'user'=> $user,
+        ];
     }
 
     /**
@@ -36,16 +55,60 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         //
+        $user = User::findOrFail($id);
+        $fields = $request->validate([
+            "first_name"=> "required|string|max:255",
+            "last_name"=> "required|string|max:255",
+            "password"=> "required",
+            "role" => "required",
+        ]);
+
+        $user->update($fields);
+
+        return response()->json([
+            'message'=> 'User Updated Successfully',
+            'user'=> $user,
+        ]);
+
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy( $id)
     {
         //
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json([
+            'message'=> 'User Deleted Successfully'
+            ]);
+    }
+
+
+
+    public function show_user( $id)
+    {
+        //
+        $user = User::find($id);
+
+        if ($user ) {
+            return response()->json([
+                'user'=> $user,
+             ]);
+
+        } else {
+
+            return response()->json([
+                'message'=> 'User Not Exist'
+                ]);
+
+        }
+
+
     }
 }

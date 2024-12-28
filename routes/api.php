@@ -21,9 +21,12 @@ Route::post("/logout", [AuthController::class,"logout"]);
 Route::group(['middleware'=> 'auth:sanctum'], function () {
 
     //user
-    Route::get('/all_users', [UserController::class, 'index']);
+    Route::get('/users', [UserController::class, 'index']);
     Route::get('/user', [UserController::class, 'show']);
     Route::post('/add_user', [UserController::class, 'store']);
+    Route::patch('/user/{id}', [UserController::class, 'update']);
+    Route::delete('/user/{id}', [UserController::class, 'destroy']);
+    Route::get('/user/{id}', [UserController::class, 'show_user']);
 
     //resource
     Route::apiResource("/category",CategoryController::class);
