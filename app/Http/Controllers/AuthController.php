@@ -51,16 +51,19 @@ class AuthController extends Controller
 
         $token = $user->createToken($user->first_name);
 
-        return [
-            "token"=> $token->plainTextToken
-        ];
+        auth('web')->login($user);
 
+        return response()->json([
+            "token"=> $token->plainTextToken,
+            "user" => $user,
+        ],200);
 
 
    }
    public function logout(Request $request){
 
        $request->user()->tokens()->delete();
+       auth("web")->logout();
 
        return [
            'message' => "you are logged out"
